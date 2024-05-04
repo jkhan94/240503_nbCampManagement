@@ -24,8 +24,8 @@ public class StudentDAO {
         String studentStatus = " ";
         LinkedList<String> statusTypes = new LinkedList<>(List.of("green", "yellow", "red"));
         LinkedList<String> studentSubjects = new LinkedList<>();
-        LinkedList<String> mandatorySubjects = new LinkedList<>(List.of("Java", "객체지향", "Spring", "JPA", "MySQL")); // 최소 3개 이상
-        LinkedList<String> choiceSubjects = new LinkedList<>(List.of("디자인 패턴", "Spring Security", "Redis", "MongoDB")); // 최소 2개 이상
+        LinkedList<String> mandatorySubjects = new LinkedList<>(); // 최소 3개 이상
+        LinkedList<String> choiceSubjects = new LinkedList<>(); // 최소 2개 이상
         int countMandatory = 0;
         int countChoice = 0;
         LinkedList<String> errors = new LinkedList<>();
@@ -61,6 +61,18 @@ public class StudentDAO {
                 }
 
                 if (printSubject) {
+                    countMandatory = 0;
+                    countChoice = 0;
+                    mandatorySubjects.clear();
+                    choiceSubjects.clear();
+
+                    for (int i = 0; i < CampManagementApplication.initializeData.getSubjectStore().size(); i++) {
+                        if (CampManagementApplication.initializeData.getSubjectStore().get(i).getSubjectType().equals("MANDATORY")) {
+                            mandatorySubjects.add(CampManagementApplication.initializeData.getSubjectStore().get(i).getSubjectName());
+                        } else {
+                            choiceSubjects.add(CampManagementApplication.initializeData.getSubjectStore().get(i).getSubjectName());
+                        }
+                    }
                     System.out.print("\n필수과목: ");
                     for (int i = 0; i < mandatorySubjects.size(); i++) {
                         System.out.print((i + 1) + "." + mandatorySubjects.get(i) + " ");
