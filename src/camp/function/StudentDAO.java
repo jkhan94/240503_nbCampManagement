@@ -4,12 +4,11 @@ import camp.CampManagementApplication;
 import camp.exception.NotEnoughSubjectsException;
 import camp.exception.NotStatusException;
 import camp.exception.SubjectOutOfBoundException;
+import camp.exception.ValidationException;
 import camp.model.Student;
 import camp.model.Subject;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class StudentDAO {
     // 스캐너
@@ -25,7 +24,7 @@ public class StudentDAO {
 
     // 수강생 등록
     public void createStudent() {
-        String studentID = sequence();
+        String studentID = initializeData.sequence(initializeData.INDEX_TYPE_STUDENT);
         String studentName = " ";
         String studentStatus = " ";
         LinkedList<String> statusTypes = new LinkedList<>(List.of("green", "yellow", "red"));
@@ -34,6 +33,7 @@ public class StudentDAO {
         LinkedList<String> choiceSubjects = new LinkedList<>(List.of("디자인 패턴", "Spring Security", "Redis", "MongoDB")); // 최소 2개 이상
         int countMandatory = 0;
         int countChoice = 0;
+        LinkedList<String> errors = new LinkedList<>();
         boolean printStatus = true;
         boolean printSubject = true;
         String input = " ";
@@ -47,7 +47,7 @@ public class StudentDAO {
         while (true) {
             try {
                 if (printStatus) {
-                    System.out.print("수강생 상태: ");
+                    System.out.print("\n수강생 상태: ");
                     for (int i = 0; i < statusTypes.size(); i++) {
                         System.out.print((i + 1) + "." + statusTypes.get(i) + " ");
                     }
@@ -61,13 +61,10 @@ public class StudentDAO {
                         studentStatus = statusTypes.get(index - 1);
                         printStatus = false;
                     }
-//                if (!statusTypes.contains(studentStatus)) {
-//                    throw new NotStatusException();
-//                }
                 }
 
                 if (printSubject) {
-                    System.out.print("필수과목: ");
+                    System.out.print("\n필수과목: ");
                     for (int i = 0; i < mandatorySubjects.size(); i++) {
                         System.out.print((i + 1) + "." + mandatorySubjects.get(i) + " ");
                     }
@@ -80,10 +77,17 @@ public class StudentDAO {
                     System.out.println("입력이 끝나면 end 를 입력하세요!");
                     System.out.print("수강생이 선택한 과목 번호를 입력하세요: ");
                 }
+                if (!errors.isEmpty() && input.equals("end")) {
+                    throw new ValidationException(errors);
+                }
 
                 input = sc.next();
+
                 if (input.equals("end")) {
                     if (countMandatory >= 3 && countChoice >= 2) {
+                        if (!errors.isEmpty()) {
+                            throw new ValidationException(errors);
+                        }
                         break;
                     } else {
                         throw new NotEnoughSubjectsException();
@@ -105,24 +109,31 @@ public class StudentDAO {
             } catch (NotStatusException e) {
                 System.out.println(e.getMessage());
                 printStatus = true;
-            } catch (SubjectOutOfBoundException e) {
-                System.out.println(e.getMessage());
-                printSubject = true;
-                studentSubjects.clear();
-            } catch (NotEnoughSubjectsException e) {
-                System.out.println(e.getMessage());
-                sc = new Scanner(System.in);
-                printSubject = true;
-                studentSubjects.clear();
             } catch (NumberFormatException e) {
-                System.out.println("번호를 입력하세요!\n");
+                System.out.println("번호를 입력하세요!");
+                sc = new Scanner(System.in);
+                studentSubjects.clear();
+            } catch (ValidationException e) {
+                errors.clear();
+                studentSubjects.clear();
                 sc = new Scanner(System.in);
                 printSubject = true;
+            } catch (SubjectOutOfBoundException e) {
+                errors.add(new SubjectOutOfBoundException().getMessage());
                 studentSubjects.clear();
+                printSubject = false;
+            } catch (NotEnoughSubjectsException e) {
+                errors.add(new NotEnoughSubjectsException().getMessage());
+                sc = new Scanner(System.in);
+                studentSubjects.clear();
+                printSubject = false;
             }
         }
 
-        Student student = new Student(studentID, studentName, studentStatus, studentSubjects);
+        Set<String> set = new LinkedHashSet<>(studentSubjects);
+        LinkedList<String> distinctStudentSubjects = new LinkedList<>(set);
+
+        Student student = new Student(studentID, studentName, studentStatus, distinctStudentSubjects);
         studentStore.add(student);
 
         System.out.println("수강생 등록 성공!\n");
@@ -136,11 +147,6 @@ public class StudentDAO {
         System.out.println("\n수강생 목록 조회 성공!");
     }
 
-    // 고유 번호 증가
-    public String sequence() {
-        studentIndex++;
-        return INDEX_TYPE_STUDENT + studentIndex;
-    }
 }
 
 

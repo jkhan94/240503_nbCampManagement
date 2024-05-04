@@ -26,11 +26,11 @@ public class CampManagementApplication {
     private static ScoreDAO scoreDAO = new ScoreDAO();
 
     public static void main(String[] args) {
-        initializeData.setInitData();
-        // 초기 데이터 출력 확인
-        System.out.println(initializeData.getStudentStore());
-        System.out.println(initializeData.getScoreStore());
-        System.out.println(initializeData.getSubjectStore());
+//        initializeData.setInitData();
+//        // 초기 데이터 출력 확인
+//        System.out.println(initializeData.getStudentStore());
+//        System.out.println(initializeData.getScoreStore());
+//        System.out.println(initializeData.getSubjectStore());
 
         try {
             displayMainView();
