@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 // 고유번호 부여
 public class InitializeData {
     // 데이터 저장소
-    private List<Student> studentStore = new LinkedList<>();
+    private List<Student> studentStore;
     private List<Subject> subjectStore = new LinkedList<>();
     private List<Score> scoreStore = new LinkedList<>();
 
@@ -41,12 +41,15 @@ public class InitializeData {
         return scoreStore;
     }
 
+    public void setStudentStore(Student student) {
+        this.studentStore.add(student);
+    }
 
     // 초기 데이터 생성 : 과목 데이터
     public void setInitData() {
         // studentStore = new ArrayList<>();
         // scoreStore = new ArrayList<>();
-        studentStore = Stream.of(
+        studentStore = new LinkedList<>(Stream.of(
                 new Student(
                         sequence(INDEX_TYPE_STUDENT),
                         "여단",
@@ -65,7 +68,7 @@ public class InitializeData {
                         "Yellow",
                         new LinkedList<>(List.of("Java", "객체지향", "Spring", "JPA", "MySQL", "디자인 패턴", "Spring Security", "Redis", "MongoDB"))
                 )
-        ).toList();
+        ).toList());
         subjectStore = List.of(
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),

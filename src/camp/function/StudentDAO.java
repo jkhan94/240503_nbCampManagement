@@ -16,15 +16,10 @@ public class StudentDAO {
 
     InitializeData initializeData = new InitializeData();
     // 고유 번호
-    private int studentIndex = 0;
-    private static final String INDEX_TYPE_STUDENT = "ST";
-
-    // 데이터 저장 리스트
-    private List<Student> studentStore = new LinkedList<>();
 
     // 수강생 등록
     public void createStudent() {
-        String studentID = initializeData.sequence(initializeData.INDEX_TYPE_STUDENT);
+        String studentID = CampManagementApplication.initializeData.sequence(CampManagementApplication.initializeData.INDEX_TYPE_STUDENT);
         String studentName = " ";
         String studentStatus = " ";
         LinkedList<String> statusTypes = new LinkedList<>(List.of("green", "yellow", "red"));
@@ -39,6 +34,8 @@ public class StudentDAO {
         String input = " ";
         int index = 0;
         sc = new Scanner(System.in);
+
+        System.out.println(CampManagementApplication.initializeData.getStudentStore());
 
         System.out.println("\n수강생을 등록합니다...");
         System.out.print("수강생 이름 입력: ");
@@ -134,10 +131,10 @@ public class StudentDAO {
         LinkedList<String> distinctStudentSubjects = new LinkedList<>(set);
 
         Student student = new Student(studentID, studentName, studentStatus, distinctStudentSubjects);
-        studentStore.add(student);
+        CampManagementApplication.initializeData.setStudentStore(student);
 
         System.out.println("수강생 등록 성공!\n");
-        System.out.println(studentStore);
+        System.out.println(CampManagementApplication.initializeData.getStudentStore());
     }
 
     // 수강생 목록 조회

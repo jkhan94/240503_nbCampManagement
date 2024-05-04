@@ -19,14 +19,14 @@ public class CampManagementApplication {
     private static Scanner sc = new Scanner(System.in);
 
     // 데이터 초기화
-    private static InitializeData initializeData = new InitializeData();
+    public static InitializeData initializeData = new InitializeData();
 
     // 기능 구현 클래스
     private static StudentDAO studentDAO = new StudentDAO();
     private static ScoreDAO scoreDAO = new ScoreDAO();
 
     public static void main(String[] args) {
-//        initializeData.setInitData();
+        initializeData.setInitData();
 //        // 초기 데이터 출력 확인
 //        System.out.println(initializeData.getStudentStore());
 //        System.out.println(initializeData.getScoreStore());
